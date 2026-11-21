@@ -119,6 +119,31 @@
   @keyframes zoomIn { from { opacity: 0; transform: scale(1.07); } to { opacity: 1; transform: none; } }
 
 
+  /* Écran d'entrée (tout le monde) */
+  .entry { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 20px; background: #070a10; overflow-y: auto; }
+  .entry[hidden] { display: none; }
+  .entry-bg { position: fixed; inset: -30px; background: url(paul.jpg) 50% 0 / cover; filter: blur(26px) brightness(.38) saturate(.9); transform: scale(1.1); }
+  .entry-box { position: relative; width: 100%; max-width: 400px; text-align: center; animation: zoomIn .5s cubic-bezier(.2,.8,.2,1) both; }
+  .entry-face { width: 112px; height: 112px; margin: 0 auto 22px; border-radius: 50%; background: url(paul.jpg) 50% 12% / cover; border: 2px solid rgba(246,239,230,.22); box-shadow: 0 0 0 8px rgba(246,239,230,.06), 0 18px 50px rgba(0,0,0,.5); }
+  .entry h2 { font-size: 30px; line-height: 1.1; font-weight: 800; letter-spacing: -.03em; margin-bottom: 10px; text-wrap: balance; }
+  .entry p.lead { color: #c9ced7; font-size: 17px; line-height: 1.45; margin: 0 auto 26px; max-width: 30ch; text-wrap: balance; }
+  .entry-btn { position: relative; display: block; width: 100%; overflow: hidden; padding: 19px 16px; border: 0; border-radius: 20px; background: linear-gradient(135deg,#f1b782,#e8a36b); color: #1a1006; font: inherit; font-weight: 800; font-size: 18px; letter-spacing: -.01em; text-align: center; text-decoration: none; cursor: pointer; box-shadow: 0 12px 32px rgba(232,163,107,.3); -webkit-touch-callout: default; transition: transform .2s; }
+  .entry-btn:hover, .entry-btn:focus-visible { transform: translateY(-2px); }
+  .entry-btn.hold::after { content: ""; position: absolute; inset: 0; background: rgba(26,16,6,.22); transform: scaleX(0); transform-origin: left; }
+  .entry-btn.hold:active::after { animation: fill 2s linear forwards; }
+  @keyframes fill { to { transform: scaleX(1); } }
+  .entry-hint { margin-top: 12px; color: var(--muted); font-size: 14px; line-height: 1.4; }
+  .steps { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 10px; text-align: left; }
+  .steps li { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; background: rgba(14,19,31,.7); border: 1px solid var(--line); font-size: 16px; line-height: 1.35; }
+  .steps .dots { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: rgba(246,239,230,.08); font-size: 22px; font-weight: 800; letter-spacing: .02em; color: var(--ember); }
+  .entry-alt { display: inline-block; margin-top: 14px; padding: 8px 14px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .entry-alt:hover, .entry-alt:focus-visible { color: var(--text); }
+  .m-app, .os-ios, .os-android { display: none; }
+  .entry.inapp .m-app { display: block; }
+  .entry.inapp .m-plain { display: none; }
+  .entry.inapp.ios .os-ios { display: block; }
+  .entry.inapp.android .os-android { display: block; }
+
   /* Étape 18+ (feuille du bas sur mobile, carte sur ordi) */
   dialog.gate { border: 0; padding: 0; background: transparent; color: var(--text); max-width: none; max-height: none; width: 100%; height: 100%; margin: 0; }
   dialog.gate::backdrop { background: rgba(4,6,10,.78); backdrop-filter: blur(10px) saturate(.8); -webkit-backdrop-filter: blur(10px) saturate(.8); }
@@ -171,6 +196,35 @@
 </style>
 </head>
 <body>
+<div class="entry" id="entry" role="dialog" aria-modal="true" aria-labelledby="entry-title">
+  <div class="entry-bg" aria-hidden="true"></div>
+  <div class="entry-box">
+    <div class="entry-face" aria-hidden="true"></div>
+    <div class="m-plain">
+      <h2 id="entry-title">Welcome to Paul's page</h2>
+      <p class="lead">Tap the button to continue.</p>
+      <button class="entry-btn" id="entry-go" data-gc="entree-continuer" type="button">Enter</button>
+    </div>
+    <div class="m-app">
+      <h2>Open this page in your browser</h2>
+      <p class="lead">This app's built-in browser can block the page. Use your real browser.</p>
+      <ol class="steps">
+        <li><span class="dots" aria-hidden="true">&bull;&bull;&bull;</span><span>Tap the three dots at the top of the screen</span></li>
+        <li><span class="dots" aria-hidden="true">&#8599;</span><span>Choose &ldquo;Open in browser&rdquo;</span></li>
+      </ol>
+      <div class="os-ios">
+        <a class="entry-btn hold" id="open-ios" data-gc="inapp-appui-long" href="https://paulnrtt.fr/" target="_blank" rel="noopener">Hold here for 2 seconds</a>
+        <p class="entry-hint">Then tap &ldquo;Open Link&rdquo; in the menu that appears.</p>
+      </div>
+      <div class="os-android">
+        <a class="entry-btn" id="open-android" data-gc="inapp-ouvrir-chrome" href="intent://paulnrtt.fr/#Intent;scheme=https;package=com.android.chrome;end">Open in Chrome</a>
+      </div>
+      <button class="entry-alt" id="copy-link" data-gc="inapp-copier" type="button">Copy the link</button>
+      <button class="entry-alt" id="stay" data-gc="inapp-rester" type="button">Continue here anyway</button>
+    </div>
+  </div>
+</div>
+<noscript><style>.entry{display:none}</style></noscript>
 <main>
   <section class="card">
     <div class="photo"><img src="paul.jpg" alt="Portrait de Paul" fetchpriority="high"></div>
@@ -210,6 +264,30 @@
     <button class="gate-no" id="gate-no" data-gc="18plus-non" type="button">No, take me back</button>
   </div>
 </dialog>
+<script>
+(function () {
+  var e = document.getElementById('entry'); if (!e) return;
+  var ua = navigator.userAgent || '';
+  var inApp = /musical_ly|BytedanceWebview|TikTok|Instagram|Snapchat|FBAN|FBAV|FB_IAB|Twitter/i.test(ua);
+  var ios = /iPhone|iPad|iPod/.test(ua), android = /Android/.test(ua);
+  var seen = false; try { seen = sessionStorage.getItem('entered') === '1'; } catch (x) {}
+  function close() { e.hidden = true; try { sessionStorage.setItem('entered', '1'); } catch (x) {} }
+  if (inApp) { e.classList.add('inapp'); if (ios) e.classList.add('ios'); else if (android) e.classList.add('android'); }
+  else if (seen) { e.hidden = true; }
+  window.addEventListener('load', function () {
+    if (inApp && window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: 'inapp-ecran-vu', title: 'inapp-ecran-vu', event: true });
+  });
+  document.getElementById('entry-go').addEventListener('click', close);
+  document.getElementById('stay').addEventListener('click', close);
+  var cp = document.getElementById('copy-link');
+  cp.addEventListener('click', function () {
+    var url = 'https://paulnrtt.fr/';
+    function ok() { cp.textContent = 'Link copied. Paste it in your browser.'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(ok, function () { window.prompt('Copy this link:', url); });
+    else window.prompt('Copy this link:', url);
+  });
+})();
+</script>
 <script>
 (function () {
   var g = document.getElementById('gate'), cta = document.querySelector('.cta');
