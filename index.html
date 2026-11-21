@@ -138,6 +138,10 @@
   .steps .dots { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: rgba(246,239,230,.08); font-size: 22px; font-weight: 800; letter-spacing: .02em; color: var(--ember); }
   .entry-alt { display: inline-block; margin-top: 14px; padding: 8px 14px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
   .entry-alt:hover, .entry-alt:focus-visible { color: var(--text); }
+  .later { margin-top: 18px; padding: 16px; border-radius: 18px; background: rgba(14,19,31,.7); border: 1px solid var(--line); color: #c9ced7; font-size: 15px; line-height: 1.45; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .5s, transform .5s, visibility 0s .5s; }
+  .later.show { opacity: 1; visibility: visible; transform: none; transition: opacity .5s, transform .5s; }
+  .later button { margin-top: 12px; padding: 10px 16px; border-radius: 999px; border: 1px solid rgba(246,239,230,.2); background: rgba(246,239,230,.08); color: var(--text); font: inherit; font-size: 15px; cursor: pointer; }
+  .later button:hover, .later button:focus-visible { background: rgba(246,239,230,.16); }
   .m-app, .os-ios, .os-android { display: none; }
   .entry.inapp .m-app { display: block; }
   .entry.inapp .m-plain { display: none; }
@@ -213,7 +217,12 @@
         <p class="entry-hint" data-i="h2">Then tap &ldquo;Open Link&rdquo;</p>
       </div>
       <div class="os-android">
-        <a class="entry-btn" id="open-android" data-gc="inapp-ouvrir-chrome" data-i="b3" href="intent://paulnrtt.fr/#Intent;scheme=https;package=com.android.chrome;end">Open in Chrome</a>
+        <a class="entry-btn" id="open-android" data-gc="inapp-ouvrir-chrome" data-i="b3" href="intent://paulnrtt.fr/#Intent;scheme=https;end">Continue</a>
+        <p class="entry-hint" data-i="h3">Opens directly in your default browser.</p>
+      </div>
+      <div class="later" id="later" aria-live="polite">
+        <p data-i="f1">Nothing happens? Tap &bull;&bull;&bull; at the top right, then open the page in your browser.</p>
+        <button type="button" id="copy-link" data-gc="inapp-copier" data-i="f2">Copy the link instead</button>
       </div>
     </div>
   </div>
@@ -265,12 +274,12 @@
   var inApp = /musical_ly|BytedanceWebview|TikTok|Instagram|Snapchat|FBAN|FBAV|FB_IAB|Twitter/i.test(ua);
   var ios = /iPhone|iPad|iPod/.test(ua), android = /Android/.test(ua);
   var T = {
-    fr: { t1: "Bienvenue sur la page de Paul", l1: "Appuie sur le bouton pour continuer.", b1: "Entrer", t2: "Dernière étape", l2: "Ouvre la page dans ton navigateur pour continuer.", b2: "Maintiens ici 2 secondes", h2: "Puis appuie sur « Ouvrir le lien »", b3: "Ouvrir dans Chrome" },
-    it: { t1: "Benvenuto sulla pagina di Paul", l1: "Tocca il pulsante per continuare.", b1: "Entra", t2: "Ultimo passaggio", l2: "Apri la pagina nel browser per continuare.", b2: "Tieni premuto qui per 2 secondi", h2: "Poi tocca «Apri»", b3: "Apri in Chrome" },
-    es: { t1: "Bienvenido a la página de Paul", l1: "Toca el botón para continuar.", b1: "Entrar", t2: "Último paso", l2: "Abre la página en tu navegador para continuar.", b2: "Mantén presionado aquí 2 segundos", h2: "Luego toca «Abrir»", b3: "Abrir en Chrome" },
-    de: { t1: "Willkommen auf Pauls Seite", l1: "Tippe auf den Button, um fortzufahren.", b1: "Weiter", t2: "Letzter Schritt", l2: "Öffne die Seite in deinem Browser, um fortzufahren.", b2: "2 Sekunden hier gedrückt halten", h2: "Tippe dann auf „Öffnen“", b3: "In Chrome öffnen" },
-    pt: { t1: "Bem-vindo à página do Paul", l1: "Toque no botão para continuar.", b1: "Entrar", t2: "Último passo", l2: "Abra a página no seu navegador para continuar.", b2: "Segure aqui por 2 segundos", h2: "Depois toque em “Abrir”", b3: "Abrir no Chrome" },
-    nl: { t1: "Welkom op de pagina van Paul", l1: "Tik op de knop om door te gaan.", b1: "Verder", t2: "Nog één stap", l2: "Open de pagina in je browser om door te gaan.", b2: "Houd hier 2 seconden ingedrukt", h2: "Tik daarna op “Open”", b3: "Openen in Chrome" }
+    fr: { t1: "Bienvenue sur la page de Paul", l1: "Appuie sur le bouton pour continuer.", b1: "Entrer", t2: "Dernière étape", l2: "Ouvre la page dans ton navigateur pour continuer.", b2: "Maintiens ici 2 secondes", h2: "Puis appuie sur « Ouvrir le lien »", b3: "Continuer", h3: "S’ouvre directement dans ton navigateur par défaut.", f1: "Rien ne se passe ? Appuie sur ••• en haut à droite, puis ouvre la page dans ton navigateur.", f2: "Copier le lien à la place", f3: "Lien copié. Colle-le dans ton navigateur." },
+    it: { t1: "Benvenuto sulla pagina di Paul", l1: "Tocca il pulsante per continuare.", b1: "Entra", t2: "Ultimo passaggio", l2: "Apri la pagina nel browser per continuare.", b2: "Tieni premuto qui per 2 secondi", h2: "Poi tocca «Apri»", b3: "Continua", h3: "Si apre direttamente nel browser predefinito.", f1: "Non succede niente? Tocca ••• in alto a destra, poi apri la pagina nel browser.", f2: "Copia invece il link", f3: "Link copiato. Incollalo nel browser." },
+    es: { t1: "Bienvenido a la página de Paul", l1: "Toca el botón para continuar.", b1: "Entrar", t2: "Último paso", l2: "Abre la página en tu navegador para continuar.", b2: "Mantén presionado aquí 2 segundos", h2: "Luego toca «Abrir»", b3: "Continuar", h3: "Se abre directamente en tu navegador predeterminado.", f1: "¿No pasa nada? Toca ••• arriba a la derecha y abre la página en tu navegador.", f2: "Copiar el enlace", f3: "Enlace copiado. Pégalo en tu navegador." },
+    de: { t1: "Willkommen auf Pauls Seite", l1: "Tippe auf den Button, um fortzufahren.", b1: "Weiter", t2: "Letzter Schritt", l2: "Öffne die Seite in deinem Browser, um fortzufahren.", b2: "2 Sekunden hier gedrückt halten", h2: "Tippe dann auf „Öffnen“", b3: "Weiter", h3: "Öffnet sich direkt in deinem Standardbrowser.", f1: "Passiert nichts? Tippe oben rechts auf ••• und öffne die Seite in deinem Browser.", f2: "Stattdessen Link kopieren", f3: "Link kopiert. Füge ihn in deinem Browser ein." },
+    pt: { t1: "Bem-vindo à página do Paul", l1: "Toque no botão para continuar.", b1: "Entrar", t2: "Último passo", l2: "Abra a página no seu navegador para continuar.", b2: "Segure aqui por 2 segundos", h2: "Depois toque em “Abrir”", b3: "Continuar", h3: "Abre diretamente no seu navegador padrão.", f1: "Nada acontece? Toque em ••• no canto superior direito e abra a página no seu navegador.", f2: "Copiar o link", f3: "Link copiado. Cole no seu navegador." },
+    nl: { t1: "Welkom op de pagina van Paul", l1: "Tik op de knop om door te gaan.", b1: "Verder", t2: "Nog één stap", l2: "Open de pagina in je browser om door te gaan.", b2: "Houd hier 2 seconden ingedrukt", h2: "Tik daarna op “Open”", b3: "Doorgaan", h3: "Opent direct in je standaardbrowser.", f1: "Gebeurt er niets? Tik rechtsboven op ••• en open de pagina in je browser.", f2: "Kopieer de link", f3: "Link gekopieerd. Plak hem in je browser." }
   };
   var lang = ((navigator.languages && navigator.languages[0]) || navigator.language || 'en').slice(0, 2).toLowerCase();
   var d = T[lang];
@@ -280,12 +289,21 @@
     for (var i = 0; i < n.length; i++) { var v = d[n[i].getAttribute('data-i')]; if (v) n[i].textContent = v; }
   }
   var seen = false; try { seen = sessionStorage.getItem('entered') === '1'; } catch (x) {}
-  if (inApp) { e.classList.add('inapp'); if (ios) e.classList.add('ios'); else if (android) e.classList.add('android'); }
-  else if (seen) { e.hidden = true; }
+  if (inApp) {
+    e.classList.add('inapp'); if (ios) e.classList.add('ios'); else if (android) e.classList.add('android');
+    setTimeout(function () { var l = document.getElementById('later'); if (l) l.classList.add('show'); }, 2000);
+  } else if (seen) { e.hidden = true; }
   window.addEventListener('load', function () {
     if (inApp && window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: 'inapp-ecran-vu', title: 'inapp-ecran-vu', event: true });
   });
   document.getElementById('entry-go').addEventListener('click', function () { e.hidden = true; try { sessionStorage.setItem('entered', '1'); } catch (x) {} });
+  var cp = document.getElementById('copy-link');
+  cp.addEventListener('click', function () {
+    var url = 'https://paulnrtt.fr/', msg = (d && d.f3) || 'Link copied. Paste it in your browser.';
+    function ok() { cp.textContent = msg; }
+    function manual() { window.prompt('https://paulnrtt.fr/', url); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(ok, manual); else manual();
+  });
 })();
 </script>
 <script>
